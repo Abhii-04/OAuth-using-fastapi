@@ -1,32 +1,25 @@
-from src.database.config import db
+import logging
+from pathlib import Path
 
-import os 
-from dotenv import load_dotenv
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from postgrest.exceptions import APIError
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from controllers.UserController import user_controller_router
+from src.controllers.UserController import user_controller_router
 
-
-app=FastAPI()
-load_dotenv(override=True)
-
-tags_metadata = [
-    {"name":"Users","description":"Operations related to user managment."}
-]
-
-app.include_router(user_controller_router,prefix="/users",tags=["Users"])
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI(title='User accounts')
+app.include_router(user_controller_router, prefix='/users', tags=['Users'])
+frontend = Path(__file__).resolve().parent / 'frontend'
+app.mount('/static', StaticFiles(directory=frontend), name='static')
 
 
-if __name__ =="__main__":
-    uvicorn.run("app:app",host=os.getenv("HOST"),port=os.getenv("PORT"),reload=True)
-    
+@app.get('/', include_in_schema=False)
+def index():
+    return FileResponse(frontend / 'index.html')
+
+
+@app.exception_handler(APIError)
+async def database_error(request: Request, error: APIError):
+    logging.getLogger(__name__).error('Database request failed (code %s)', error.code)
+    return JSONResponse(status_code=503, content={'detail': 'Database request failed. Check the server database configuration and tables.'})

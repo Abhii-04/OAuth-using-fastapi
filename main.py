@@ -1,12 +1,8 @@
-from typing import Annotated
+import os
 
-from fastapi import Depends, FastAPI
-from fastapi.security import OAuth2AuthorizationCodeBearer
+import uvicorn
 
-app=FastAPI()
+from src.app import app
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(token_url = "token")  #here token_url is the API url where the id and pw is sent for verification and it responds with a token to us
-                                                                    #OAuth2AuthorizationCodeBearer is used to authenticate the frontend with our API, it sends authorization with a bearer + token
-@app.get("/items/")
-async def read_items(token:Annotated[str,Depends(oauth2_scheme)]):
-    return {"token":token}
+if __name__ == '__main__':
+    uvicorn.run(app, host=os.getenv('HOST', '127.0.0.1'), port=int(os.getenv('PORT', '8000')))

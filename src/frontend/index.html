@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account · User portal</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header><a href="/" class="brand">account<span> / user portal</span></a><a href="/docs">API docs ↗</a></header>
+  <main>
+    <section class="intro"><p class="eyebrow">YOUR ACCOUNT</p><h1>A simple place<br>to sign in.</h1><p>Create an account, sign in, and manage your active session.</p><p class="note">Your password is stored as a secure hash.</p></section>
+    <section class="panel" aria-label="Account access">
+      <div id="access">
+        <div class="switch" role="group" aria-label="Choose account action"><button id="login" type="button" aria-pressed="true">Sign in</button><button id="register" type="button" aria-pressed="false">Create account</button></div>
+        <h2 id="heading">Welcome back</h2><p id="hint">Enter your username and password to continue.</p>
+        <form id="account-form">
+          <label for="username">Username</label><input id="username" name="username" autocomplete="username" maxlength="100" pattern="\S+" required>
+          <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+          <button class="primary" id="submit" type="submit">Sign in →</button>
+        </form>
+      </div>
+      <div id="session" hidden><p class="eyebrow">SIGNED IN</p><h2 id="welcome"></h2><p>Your account session is active.</p><button class="primary" id="check" type="button">Check session</button><button id="logout" type="button">Sign out</button></div>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer>Account access, kept simple.</footer>
+</body>
+</html>
